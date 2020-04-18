@@ -1,0 +1,13 @@
+.table-log-viewer.table {
+  margin-bottom: 0;
+}
+.table-log-viewer.table td {
+  margin: 0;
+  padding: 5px 0 !important;
+}
+.table-log-viewer.table .text-left {
+  width: 90px;
+}
+.table-log-viewer.table .text-center {
+  text-align: center;
+}
