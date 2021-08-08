@@ -3,10 +3,9 @@ This is a plugin for Botble CMS so you have to purchase Botble CMS first to use 
 Purchase it here: [https://codecanyon.net/item/botble-cms-php-platform-based-on-laravel-framework/16928182](https://1.envato.market/LWRBY)
 
 # Installation
-- Download and copy source code into `/platform/plugins/log-viewer`.
-- Run command `php artisan cms:plugin:activate log-viewer` to activate this plugin.
-- Go to Admin -> Platform Administration -> System logs.
-
+- Download and rename folder `log-viewer-master` to `log-viewer`.
+- Copy folder `log-viewer` into `/platform/plugins`.
+- Go to Admin -> Plugins then activate plugin Log Viewer.
 
 # Screenshots
 
