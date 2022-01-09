@@ -49,7 +49,7 @@ class LogViewerController extends BaseController
      * List all logs.
      *
      * @param Request $request
-     * @return View
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|View
      */
     public function listLogs(Request $request)
     {
@@ -87,7 +87,7 @@ class LogViewerController extends BaseController
      * Show the log.
      *
      * @param string $date
-     * @return View
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|View
      */
     public function show($date)
     {
@@ -111,7 +111,6 @@ class LogViewerController extends BaseController
         } catch (LogNotFoundException $ex) {
             abort(404, $ex->getMessage());
         }
-        return null;
     }
 
     /**
@@ -119,7 +118,7 @@ class LogViewerController extends BaseController
      *
      * @param string $date
      * @param string $level
-     * @return View|RedirectResponse
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|RedirectResponse|View
      */
     public function showByLevel($date, $level)
     {

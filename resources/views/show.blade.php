@@ -1,4 +1,4 @@
-@extends('core/base::layouts.master')
+@extends(BaseHelper::getAdminMasterLayoutTemplate())
 
 @section('content')
     @include('plugins/log-viewer::partials.style')
@@ -11,21 +11,22 @@
             <div class="panel panel-default">
                 <div class="panel-heading" style="height: 48px;line-height: 30px;">
                     {{ trans('plugins/log-viewer::log-viewer.log_info') }} :
-                    <div class="group-btns float-right">
+                    <div class="group-btns float-end">
                         <a href="{{ route('log-viewer::logs.download', [$log->date]) }}" class="btn btn-success">
                             <i class="fa fa-download"></i> {{ trans('plugins/log-viewer::log-viewer.download') }}
                         </a>
-                        <a href="#delete-log-modal" class="btn btn-danger" data-toggle="modal">
+                        <a href="#delete-log-modal" class="btn btn-danger" data-bs-toggle="modal">
                             <i class="fa fa-trash"></i> {{ trans('plugins/log-viewer::log-viewer.delete') }}
                         </a>
                     </div>
+                    <div class="clearfix"></div>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-condensed">
                         <thead>
                         <tr>
                             <td>{{ trans('plugins/log-viewer::log-viewer.file_path') }} :</td>
-                            <td colspan="5">{{ $log->getPath() }}</td>
+                            <td colspan="5"><strong>{{ $log->getPath() }}</strong></td>
                         </tr>
                         </thead>
                         <tbody>
@@ -56,7 +57,7 @@
                 @if ($entries->hasPages())
                     <div class="panel-heading">
                         {!! $entries->render() !!}
-                        <span class="label label-info float-right">
+                        <span class="label label-info float-end">
                             {{ trans('plugins/log-viewer::log-viewer.page') }} {!! $entries->currentPage() !!} {{ trans('plugins/log-viewer::log-viewer.of') }} {!! $entries->lastPage() !!}
                         </span>
                     </div>
@@ -90,7 +91,7 @@
                                 </td>
                                 <td class="text-right">
                                     @if ($entry->hasStack())
-                                        <a class="btn btn-secondary" role="button" data-toggle="collapse"
+                                        <a class="btn btn-secondary" role="button" data-bs-toggle="collapse"
                                            href="#log-stack-{{ $key }}" aria-expanded="false"
                                            aria-controls="log-stack-{{ $key }}">
                                             <i class="fa fa-toggle-on"></i> {{ trans('plugins/log-viewer::log-viewer.stack') }}
@@ -115,7 +116,7 @@
                 @if ($entries->hasPages())
                     <div class="panel-footer">
                         {!! $entries->render() !!}
-                        <span class="label label-info float-right">
+                        <span class="label label-info float-end">
                             Page {!! $entries->currentPage() !!} of {!! $entries->lastPage() !!}
                         </span>
                     </div>
@@ -124,30 +125,29 @@
         </div>
     </div>
 
-        <div id="delete-log-modal" class="modal fade">
-            <div class="modal-dialog">
-                <form id="delete-log-form" action="{{ route('log-viewer::logs.destroy') }}" method="post">
-                    <input type="hidden" name="_method" value="DELETE">
-                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                    <input type="hidden" name="date" value="{{ $log->date }}">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title"><i class="til_img"></i><strong>{{ trans('plugins/log-viewer::log-viewer.delete_log_file') }}</strong></h4>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <p>{!! trans('plugins/log-viewer::log-viewer.confirm_delete_msg', ['date' => $log->date]) !!}</p>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-sm btn-secondary float-left" data-dismiss="modal">{{ trans('core/base::forms.cancel') }}</button>
-                            <button type="submit" class="btn btn-sm btn-danger">{{ trans('plugins/log-viewer::log-viewer.delete_button') }}</button>
-                        </div>
+    <div id="delete-log-modal" class="modal fade">
+        <div class="modal-dialog">
+            <form id="delete-log-form" action="{{ route('log-viewer::logs.destroy') }}" method="post">
+                @method('DELETE')
+                @csrf
+                <input type="hidden" name="date" value="{{ $log->date }}">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title"><i class="til_img"></i><strong>{{ trans('plugins/log-viewer::log-viewer.delete_log_file') }}</strong></h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        </button>
                     </div>
-                </form>
-            </div>
+                    <div class="modal-body">
+                        <p>{!! trans('plugins/log-viewer::log-viewer.confirm_delete_msg', ['date' => $log->date]) !!}</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-secondary float-start" data-bs-dismiss="modal">{{ trans('core/base::forms.cancel') }}</button>
+                        <button type="submit" class="btn btn-sm btn-danger" id="delete-log-button">{{ trans('plugins/log-viewer::log-viewer.delete_button') }}</button>
+                    </div>
+                </div>
+            </form>
         </div>
+    </div>
 @endsection
 @section('javascript')
     <script>
@@ -157,7 +157,7 @@
             var deleteLogForm = $('form#delete-log-form');
             var submitBtn = deleteLogForm.find('button[type=submit]');
 
-            deleteLogForm.submit(function (event) {
+            deleteLogForm.on('submit', function (event) {
                 event.preventDefault();
                 submitBtn.addClass('button-loading');
 

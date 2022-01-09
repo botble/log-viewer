@@ -1,4 +1,4 @@
-@extends('core/base::layouts.master')
+@extends(BaseHelper::getAdminMasterLayoutTemplate())
 
 @section('content')
     @include('plugins/log-viewer::partials.style')
@@ -68,20 +68,20 @@
     <div id="delete-log-modal" class="modal fade">
         <div class="modal-dialog">
             <form id="delete-log-form" action="{{ route('log-viewer::logs.destroy') }}" method="post">
-                <input type="hidden" name="_method" value="DELETE">
-                <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                @method('DELETE')
+                @csrf
                 <input type="hidden" name="date">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title"><i class="til_img"></i><strong>{{ trans('plugins/log-viewer::log-viewer.delete_log_file') }}</strong></h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
                     </div>
 
                     <div class="modal-body with-padding">
                         <p>{!! trans('plugins/log-viewer::log-viewer.confirm_delete_msg', ['date' => null]) !!}</p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-sm btn-secondary float-left" data-dismiss="modal">{{ trans('core/base::forms.cancel') }}</button>
+                        <button type="button" class="btn btn-sm btn-secondary float-start" data-bs-dismiss="modal">{{ trans('core/base::forms.cancel') }}</button>
                         <button type="submit" class="btn btn-sm btn-danger">{{ trans('plugins/log-viewer::log-viewer.delete_button') }}</button>
                     </div>
                 </div>
@@ -108,7 +108,7 @@
                 deleteLogModal.modal('show');
             });
 
-            deleteLogForm.submit(function (event) {
+            deleteLogForm.on('submit', function (event) {
                 event.preventDefault();
                 submitBtn.addClass('button-loading');
 
