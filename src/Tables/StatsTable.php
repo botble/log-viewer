@@ -8,26 +8,12 @@ use Illuminate\Support\Arr;
 
 class StatsTable extends Table
 {
-    /**
-     * Make a stats table instance.
-     *
-     * @param array $data
-     * @param LogLevelsContract $levels
-     * @param string|null $locale
-     * @return StatsTable
-     */
-    public static function make(array $data, LogLevelsContract $levels, $locale = null)
+    public static function make(array $data, LogLevelsContract $levels, string $locale = null): static
     {
         return new self($data, $levels, $locale);
     }
 
-    /**
-     * Get json chart data.
-     *
-     * @param string|null $locale
-     * @return array|false|string
-     */
-    public function totalsJson($locale = null)
+    public function totalsJson(string $locale = null): bool|array|string
     {
         $this->setLocale($locale);
 
@@ -46,13 +32,7 @@ class StatsTable extends Table
         return json_encode(array_values($json), JSON_PRETTY_PRINT);
     }
 
-    /**
-     * Prepare table header.
-     *
-     * @param array $data
-     * @return array
-     */
-    protected function prepareHeader(array $data)
+    protected function prepareHeader(array $data): array
     {
         return array_merge_recursive(
             [
@@ -63,13 +43,7 @@ class StatsTable extends Table
         );
     }
 
-    /**
-     * Prepare table rows.
-     *
-     * @param array $data
-     * @return array
-     */
-    protected function prepareRows(array $data)
+    protected function prepareRows(array $data): array
     {
         $rows = [];
 
@@ -80,13 +54,7 @@ class StatsTable extends Table
         return $rows;
     }
 
-    /**
-     * Prepare table footer.
-     *
-     * @param array $data
-     * @return array
-     */
-    protected function prepareFooter(array $data)
+    protected function prepareFooter(array $data): array
     {
         $footer = [];
 

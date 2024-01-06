@@ -2,11 +2,15 @@
 
 namespace Botble\LogViewer\Providers;
 
+use Botble\Base\Facades\DashboardMenu;
+use Botble\Base\Facades\PanelSectionManager;
+use Botble\Base\PanelSections\Manager;
+use Botble\Base\PanelSections\PanelSectionItem;
+use Botble\Base\PanelSections\System\SystemPanelSection;
 use Botble\LogViewer\LogViewer;
 use Illuminate\Routing\Events\RouteMatched;
 use Botble\Base\Supports\Helper;
 use Botble\Base\Traits\LoadAndPublishDataTrait;
-use Event;
 use Illuminate\Support\ServiceProvider;
 use Botble\LogViewer\Contracts;
 use Botble\LogViewer\Utilities;
@@ -62,16 +66,31 @@ class LogViewerServiceProvider extends ServiceProvider
             ->loadMigrations()
             ->publishAssets();
 
-        Event::listen(RouteMatched::class, function () {
-            dashboard_menu()->registerItem([
-                'id'          => 'cms-plugin-system-logs',
-                'priority'    => 7,
-                'parent_id'   => 'cms-core-platform-administration',
-                'name'        => 'plugins/log-viewer::log-viewer.menu_name',
-                'icon'        => null,
-                'url'         => route('log-viewer::logs.index'),
-                'permissions' => ['logs.index'],
-            ]);
-        });
+        if (version_compare('7.0.0', get_core_version(), '>=')) {
+            $this->app['events']->listen(RouteMatched::class, function () {
+                DashboardMenu::registerItem([
+                    'id' => 'cms-plugin-log-viewer',
+                    'priority' => 7,
+                    'parent_id' => 'cms-core-platform-administration',
+                    'name' => 'plugins/log-viewer::log-viewer.system_logs',
+                    'icon' => null,
+                    'url' => route('log-viewer::logs.index'),
+                    'permissions' => ['log-viewer::logs.index'],
+                ]);
+            });
+        } else {
+            PanelSectionManager::group('system')->beforeRendering(function (Manager $manager) {
+                $manager
+                    ->registerItem(
+                        SystemPanelSection::class,
+                        fn() => PanelSectionItem::make('system.log-viewer')
+                            ->setTitle(trans('plugins/log-viewer::log-viewer.system_logs'))
+                            ->withDescription(trans('plugins/log-viewer::log-viewer.system_logs_description'))
+                            ->withIcon('ti ti-report')
+                            ->withPriority(9980)
+                            ->withRoute('log-viewer::logs.index')
+                    );
+            });
+        }
     }
 }
